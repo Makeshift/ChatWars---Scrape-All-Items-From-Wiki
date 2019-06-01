@@ -1,6 +1,7 @@
 const request = require('request-promise');
 const MongoClient = require('mongodb').MongoClient;
 const fs = require('fs');
+const stringify = require('json-stable-stringify');
 
 const config = {
     baseUrl: "https://chatwars-wiki.de/api.php?action=ask&format=json&query=",
@@ -87,11 +88,23 @@ let generalItemQuery = `\
 go();
 async function go() {
     //const items = await (await (await MongoClient.connect(config.mongo.url, {useNewUrlParser: true})).db()).collection('items');
+    console.log("Getting basic item list")
     let itemList = await fixObjLayout(await get(generalItemQuery));
-    Object.keys(itemList).forEach(async key => {
-        itemList[key].recipe = await getItemRecipe(itemList[key].name)
-    }) 
+    let promises = [];
+    for (const key of Object.keys(itemList)) {
+        promises.push(new Promise(async resolve => {
+            let recipe = await getItemRecipe(itemList[key].name);
+            if (Object.entries(recipe).length !== 0) {
+                itemList[key].recipe = recipe
+            }
+            resolve();
+        }))
+    }
+    console.log("Waiting for recipes to finish")
+    await Promise.all(promises);
     let write = fs.createWriteStream("items.json");
+    //Lazy sort
+    itemList = JSON.parse(stringify(itemList))
     Object.keys(itemList).forEach(async key => {
         let item = itemList[key];
         write.write(JSON.stringify(item) + "\n");
@@ -134,6 +147,9 @@ async function fixObjLayout(obj) {
         finalObj.name = finalObj.fulltext;
         finalObj._id = finalObj.ItemID;
         let toDelete = ["fullurl", "ItemID", "Note", "fulltext", "namespace"];
+        finalObj.SkillCraft = finalObj.SkillCraft.fulltext || toDelete.push("SkillCraft");
+        finalObj.ArmorClass = finalObj.ArmorClass.fulltext || toDelete.push("ArmorClass");
+        finalObj.Ammunition = finalObj.Ammunition.fulltext || toDelete.push("Ammunition");
         Object.keys(finalObj).forEach(a => {
             if (finalObj.hasOwnProperty(a) && finalObj[a].length === 0) {
                 toDelete.push(a)

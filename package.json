@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Makeshift/ChatWars---Scrape-All-Items-From-Wiki#readme",
   "dependencies": {
+    "json-stable-stringify": "^1.0.1",
     "mongodb": "^3.2.6",
     "request": "^2.88.0",
     "request-promise": "^4.2.4"
