@@ -1,0 +1,24 @@
+{
+  "name": "chatwars---scrape-all-items-from-wiki",
+  "version": "0.1.0",
+  "description": "Scrapes all the items from the Chat Wars wiki API and drops them into a Mongo DB.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Makeshift/ChatWars---Scrape-All-Items-From-Wiki.git"
+  },
+  "author": "Connor Bell",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Makeshift/ChatWars---Scrape-All-Items-From-Wiki/issues"
+  },
+  "homepage": "https://github.com/Makeshift/ChatWars---Scrape-All-Items-From-Wiki#readme",
+  "dependencies": {
+    "mongodb": "^3.2.6",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
+  }
+}
